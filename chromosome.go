@@ -1,4 +1,4 @@
-package simplega
+package poorga
 
 import (
 	"math/rand"
@@ -50,4 +50,36 @@ func (chrom *Chromosome) crossover(secChrom Chromosome, crossRate float64) Chrom
 	return newChrom
 }
 
+func (chrom *Chromosome) mutate(mutationRate float64) Chromosome {
+	var newChrom Chromosome
+	len := chrom.length
+	newChrom.length = len
+	newChrom.body = make([]int, len)
+	newChrom.fitness = -1
 
+	mutationNum := int(float64(len) * mutationRate)
+	mutationGenetic := make([]bool, len)
+
+	//決定哪些基因會突變
+	for i := 0; i < mutationNum; i++ {
+		var idx int
+		for idx = rand.Int() % len; mutationGenetic[idx]; idx = rand.Int() % len {
+		}
+		mutationGenetic[idx] = true
+	}
+
+	//產生新基因
+	for i := 0; i < len; i++ {
+		if mutationGenetic[i] {
+			if chrom.body[i] == 0 {
+				newChrom.body[i] = 1
+			} else {
+				newChrom.body[i] = 0
+			}
+		} else {
+			newChrom.body[i] = chrom.body[i]
+		}
+	}
+
+	return newChrom
+}
