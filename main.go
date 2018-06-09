@@ -1,4 +1,0 @@
-package poorga
-
-func main() {
-}
