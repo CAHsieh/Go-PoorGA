@@ -84,3 +84,5 @@ func main() {
 
 }
 ```
+### **Result**
+![result](https://github.com/CAHsieh/Go-PoorGA/blob/master/result.png)
