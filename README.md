@@ -9,6 +9,7 @@
 > **chromosome.go**
 > ---
 >> Chromosome為染色體物件，其中包含三屬性body、length、fitness及三方法init、crossover、mutate：
+>>
 >> |屬性|說明|
 >> | :---: | :--- |
 >> |body|染色體的本體，由一串01組成。|
@@ -26,6 +27,7 @@
 > **World.go**
 > ---
 >> World為模擬染色體生存環境的物件，在使用時需建立此物件並調用其方法來執行基因演算法。
+>>
 >> |屬性|說明|
 >> | :---: | :--- |
 >> | chromosome    | 每個世代存活的染色體 |
@@ -48,6 +50,7 @@
 > **Custom.go**
 > ---
 >> Custom為需要使用者客製化的介面，其中包含InitChromosome、Fitness、Print、PrintResult
+>>
 >> |方法|說明|
 >> | :---: | :--- |
 >> |InitChromosome|用來做染色體的初始化，請調用chromosome的Init，並傳入染色體長度即可。|
@@ -75,7 +78,7 @@ func main() {
 	var stringMatcher poorga.StringMatcher
 	stringMatcher.SetTarget("Hello World!")
 	var world poorga.World
-	world.Initial(50, 10, 30000, 30000, 1.0, stringMatcher)
+	world.Initial(50, 20, 300000, 300000, 1.0, stringMatcher)
 	world.SetIsPrint(true)
 	world.StartWorld()
 
