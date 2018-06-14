@@ -31,7 +31,9 @@ func (matcher StringMatcher) Fitness(chromosome *Chromosome) {
 	for j := 0; j < targetLen; j++ {
 		if matcher.target[j] == currentString[j] {
 			acc++
-		}
+		} /* else {
+			acc += (1 / (math.Abs(float64(matcher.target[j]-currentString[j])) + 1))
+		}*/
 	}
 	chromosome.SetFitness(float64(acc) / float64(targetLen))
 	// fmt.Print(string(currentString) + " ")
@@ -41,7 +43,7 @@ func (matcher StringMatcher) Fitness(chromosome *Chromosome) {
 
 //Print is the method to implement Custom interface
 func (matcher StringMatcher) Print(iteration int, chromosome []Chromosome) {
-	if iteration%300 != 0 {
+	if iteration%10000 != 0 {
 		return
 	}
 	targetLen := len(matcher.target)
@@ -51,11 +53,11 @@ func (matcher StringMatcher) Print(iteration int, chromosome []Chromosome) {
 
 //PrintResult is the method to implement Custom interface
 func (matcher StringMatcher) PrintResult(chromosome []Chromosome) {
-	for i, chr := range chromosome {
-		fmt.Printf("Chromosome No.%d\tfitness:%f\n", i, chr.GetFitness())
-		fmt.Printf("Result: %s\n", string(matcher.getString(len(matcher.target), &chr)))
-		fmt.Print("Chromosome body: ")
-		fmt.Println(chr.GetBody())
+	for i := 0; i < 10; i++ {
+		fmt.Printf("Chromosome No.%d\tfitness:%f\t", i+1, chromosome[i].GetFitness())
+		fmt.Printf("Result: %s\n", string(matcher.getString(len(matcher.target), &chromosome[i])))
+		// fmt.Print("Chromosome body: ")
+		// fmt.Println(chromosome[i].GetBody())
 	}
 }
 
