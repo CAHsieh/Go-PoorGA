@@ -20,14 +20,14 @@ func (chrom *Chromosome) init(len int) {
 	}
 }
 
-func (chrom *Chromosome) crossover(secChrom Chromosome, crossRate float64) Chromosome {
+func (chrom *Chromosome) crossover(secChrom Chromosome, crossRate float32) Chromosome {
 	var newChrom Chromosome
 	len := chrom.length
 	newChrom.length = len
 	newChrom.body = make([]int, len)
 	newChrom.fitness = -1
 
-	motherNum := int(float64(len) * crossRate)
+	motherNum := int(float32(len) * crossRate)
 	usedMotherGenetic := make([]bool, len)
 
 	//決定哪些基因來自母親
@@ -50,14 +50,14 @@ func (chrom *Chromosome) crossover(secChrom Chromosome, crossRate float64) Chrom
 	return newChrom
 }
 
-func (chrom *Chromosome) mutate(mutationRate float64) Chromosome {
+func (chrom *Chromosome) mutate(mutationRate float32) Chromosome {
 	var newChrom Chromosome
 	len := chrom.length
 	newChrom.length = len
 	newChrom.body = make([]int, len)
 	newChrom.fitness = -1
 
-	mutationNum := int(float64(len) * mutationRate)
+	mutationNum := int(float32(len) * mutationRate)
 	mutationGenetic := make([]bool, len)
 
 	//決定哪些基因會突變
