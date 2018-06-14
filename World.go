@@ -34,7 +34,7 @@ func (world *World) Initial(generationNum int, randomNum int,
 	world.customMethod = customMethod
 }
 
-//SetIsPrint 用來控制是否輸出GA過程
+//SetIsPrint 用來控制是否在GA過程中調用Custom介面中的Print
 func (world *World) SetIsPrint(isPrint bool) {
 	world.isPrint = isPrint
 }
@@ -117,6 +117,10 @@ func (world World) mutate() []Chromosome {
 	return mutatedChr
 }
 
+/**
+ * 根據配適度選擇下一世代存活下來的染色體群，
+ * 若配適度相同則優先序為交配 > 突變 > 本世代染色體
+ */
 func (world World) selection(crossChr []Chromosome, mutatedChr []Chromosome) []Chromosome {
 
 	remainingPlace := world.generationNum - world.randomNum

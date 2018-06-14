@@ -26,12 +26,12 @@ func (chrom *Chromosome) SetFitness(fitness float64) {
 	chrom.fitness = fitness
 }
 
-//GetFitness 用於設置配適度
+//GetFitness 用於取得配適度
 func (chrom Chromosome) GetFitness() float64 {
 	return chrom.fitness
 }
 
-//GetBody 用於取得染色體本體
+//GetBody 用於取得染色體內容
 func (chrom Chromosome) GetBody() []int {
 	return chrom.body
 }
