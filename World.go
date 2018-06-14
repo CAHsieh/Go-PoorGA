@@ -47,8 +47,8 @@ func (world *World) StartWorld() {
 	//initial
 	world.chromosome = make([]Chromosome, world.generationNum)
 	for i := 0; i < world.generationNum; i++ {
-		world.customMethod.initChromosome(&world.chromosome[i])
-		world.customMethod.fitness(&world.chromosome[i])
+		world.customMethod.InitChromosome(&world.chromosome[i])
+		world.customMethod.Fitness(&world.chromosome[i])
 	}
 
 	for i := 0; i < world.iterationNum; i++ {
@@ -62,7 +62,7 @@ func (world *World) StartWorld() {
 		world.chromosome = world.selection(crossChr, mutatedChr) // 選擇
 
 		if world.isPrint {
-			world.customMethod.print(i, world.chromosome)
+			world.customMethod.Print(i, world.chromosome)
 		}
 
 		if world.chromosome[0].fitness >= world.goodEnough {
@@ -78,7 +78,7 @@ func (world *World) StartWorld() {
 		}
 
 	}
-	world.customMethod.printResult(world.chromosome)
+	world.customMethod.PrintResult(world.chromosome)
 	println("end!!")
 }
 
@@ -96,7 +96,7 @@ func (world World) crossover() []Chromosome {
 			secIdx = rand.Int() % world.generationNum
 		}
 		crossChr[i] = world.chromosome[firstIdx].crossover(world.chromosome[secIdx], rand.Float32()*0.5)
-		world.customMethod.fitness(&crossChr[i])
+		world.customMethod.Fitness(&crossChr[i])
 	}
 
 	return crossChr
@@ -111,7 +111,7 @@ func (world World) mutate() []Chromosome {
 
 	for i := 0; i < world.generationNum; i++ {
 		mutatedChr[i] = world.chromosome[i].mutate(rand.Float32() * 0.7)
-		world.customMethod.fitness(&mutatedChr[i])
+		world.customMethod.Fitness(&mutatedChr[i])
 	}
 
 	return mutatedChr

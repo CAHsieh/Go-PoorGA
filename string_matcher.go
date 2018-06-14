@@ -15,12 +15,15 @@ func (matcher *StringMatcher) SetTarget(target string) {
 	matcher.target = []rune(target)
 }
 
-func (matcher StringMatcher) initChromosome(chromosome *Chromosome) {
+//InitChromosome is the method to implement Custom interface
+func (matcher StringMatcher) InitChromosome(chromosome *Chromosome) {
 	//ascii 32~126 -> 0~94 + 32
 	//2^6 < 94 < 2^7
-	chromosome.init(8 * len(matcher.target))
+	chromosome.Init(8 * len(matcher.target))
 }
-func (matcher StringMatcher) fitness(chromosome *Chromosome) {
+
+//Fitness is the method to implement Custom interface
+func (matcher StringMatcher) Fitness(chromosome *Chromosome) {
 	targetLen := len(matcher.target)
 	// for i := 0; i < len(*chromosome); i++ {
 	currentString := matcher.getString(targetLen, chromosome)
@@ -30,38 +33,41 @@ func (matcher StringMatcher) fitness(chromosome *Chromosome) {
 			acc++
 		}
 	}
-	chromosome.fitness = float64(acc) / float64(targetLen)
+	chromosome.SetFitness(float64(acc) / float64(targetLen))
 	// fmt.Print(string(currentString) + " ")
 	// fmt.Println(chromosome.fitness)
 	// }
 }
 
-func (matcher StringMatcher) print(iteration int, chromosome []Chromosome) {
+//Print is the method to implement Custom interface
+func (matcher StringMatcher) Print(iteration int, chromosome []Chromosome) {
 	if iteration%300 != 0 {
 		return
 	}
 	targetLen := len(matcher.target)
 	currentString := matcher.getString(targetLen, &chromosome[0])
-	fmt.Printf("%d: %s %f\n", iteration, string(currentString), chromosome[0].fitness)
+	fmt.Printf("%d: %s %f\n", iteration, string(currentString), chromosome[0].GetFitness())
 }
 
-func (matcher StringMatcher) printResult(chromosome []Chromosome) {
+//PrintResult is the method to implement Custom interface
+func (matcher StringMatcher) PrintResult(chromosome []Chromosome) {
 	for i, chr := range chromosome {
-		fmt.Printf("Chromosome No.%d\tfitness:%f\n", i, chr.fitness)
+		fmt.Printf("Chromosome No.%d\tfitness:%f\n", i, chr.GetFitness())
 		fmt.Printf("Result: %s\n", string(matcher.getString(len(matcher.target), &chr)))
 		fmt.Print("Chromosome body: ")
-		fmt.Println(chr.body)
+		fmt.Println(chr.GetBody())
 	}
 }
 
 func (matcher StringMatcher) getString(targetLen int, chromosome *Chromosome) []rune {
 	result := make([]rune, targetLen)
+	body := chromosome.GetBody()
 	for j := 0; j < targetLen; j++ {
 		st := j * 8
 		end := (j + 1) * 8
 		value := 0
 		for k := st; k < end; k++ {
-			if chromosome.body[k] == 1 {
+			if body[k] == 1 {
 				value += int(math.Pow(2, float64(k-st)))
 			}
 		}

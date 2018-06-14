@@ -11,13 +11,29 @@ type Chromosome struct {
 	fitness float64
 }
 
-func (chrom *Chromosome) init(len int) {
+//Init 用於初始化染色體，必須在Custom中的initChromosome內調用
+func (chrom *Chromosome) Init(len int) {
 	chrom.fitness = -1
 	chrom.length = len
 	chrom.body = make([]int, len)
 	for i := 0; i < len; i++ {
 		chrom.body[i] = rand.Int() % 2
 	}
+}
+
+//SetFitness 用於設置配適度
+func (chrom *Chromosome) SetFitness(fitness float64) {
+	chrom.fitness = fitness
+}
+
+//GetFitness 用於設置配適度
+func (chrom Chromosome) GetFitness() float64 {
+	return chrom.fitness
+}
+
+//GetBody 用於取得染色體本體
+func (chrom Chromosome) GetBody() []int {
+	return chrom.body
 }
 
 func (chrom *Chromosome) crossover(secChrom Chromosome, crossRate float32) Chromosome {
