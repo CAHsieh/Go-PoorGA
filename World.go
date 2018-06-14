@@ -51,7 +51,8 @@ func (world *World) StartWorld() {
 		world.customMethod.Fitness(&world.chromosome[i])
 	}
 
-	for i := 0; i < world.iterationNum; i++ {
+	i := 0
+	for ; i < world.iterationNum; i++ {
 		if optTimes >= world.optimizeTimes {
 			break
 		}
@@ -79,7 +80,7 @@ func (world *World) StartWorld() {
 
 	}
 	world.customMethod.PrintResult(world.chromosome)
-	println("end!!")
+	fmt.Printf("end at iteration %d !!", i)
 }
 
 /**
@@ -119,7 +120,7 @@ func (world World) mutate() []Chromosome {
 
 /**
  * 根據配適度選擇下一世代存活下來的染色體群，
- * 若配適度相同則優先序為交配 > 突變 > 本世代染色體
+ * 若配適度相同則優先序為突變 > 交配 > 本世代染色體
  */
 func (world World) selection(crossChr []Chromosome, mutatedChr []Chromosome) []Chromosome {
 
@@ -131,12 +132,12 @@ func (world World) selection(crossChr []Chromosome, mutatedChr []Chromosome) []C
 	mutIdx := 0
 
 	for i := 0; i < remainingPlace; i++ {
-		if crossChr[crxIdx].fitness >= world.chromosome[oriIdx].fitness && crossChr[crxIdx].fitness >= mutatedChr[mutIdx].fitness {
-			survivedChr[i] = crossChr[crxIdx]
-			crxIdx++
-		} else if mutatedChr[mutIdx].fitness >= world.chromosome[oriIdx].fitness && mutatedChr[mutIdx].fitness >= crossChr[crxIdx].fitness {
+		if mutatedChr[mutIdx].fitness >= world.chromosome[oriIdx].fitness && mutatedChr[mutIdx].fitness >= crossChr[crxIdx].fitness {
 			survivedChr[i] = mutatedChr[mutIdx]
 			mutIdx++
+		} else if crossChr[crxIdx].fitness >= world.chromosome[oriIdx].fitness && crossChr[crxIdx].fitness >= mutatedChr[mutIdx].fitness {
+			survivedChr[i] = crossChr[crxIdx]
+			crxIdx++
 		} else if world.chromosome[oriIdx].fitness >= crossChr[crxIdx].fitness && world.chromosome[oriIdx].fitness >= mutatedChr[mutIdx].fitness {
 			survivedChr[i] = world.chromosome[oriIdx]
 			oriIdx++
