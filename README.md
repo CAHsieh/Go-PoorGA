@@ -85,4 +85,4 @@ func main() {
 }
 ```
 ### **Result**
-![result](https://github.com/CAHsieh/Go-PoorGA/blob/master/result.png)
+<img src="https://github.com/CAHsieh/Go-PoorGA/blob/master/result.png" width="50%" height="50%">
