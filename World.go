@@ -3,6 +3,7 @@ package poorga
 import (
 	"fmt"
 	"math/rand"
+	"runtime"
 )
 
 //World 是染色體生存的環境
@@ -41,6 +42,10 @@ func (world *World) SetIsPrint(isPrint bool) {
 
 //StartWorld 開始執行基因演算法
 func (world *World) StartWorld() {
+
+	//使用多核心
+	runtime.GOMAXPROCS(2)
+
 	optTimes := 0
 	lastFitness := float64(0)
 
@@ -57,8 +62,15 @@ func (world *World) StartWorld() {
 			break
 		}
 
-		crossChr := world.crossover() // 交配
-		mutatedChr := world.mutate()  // 突變
+		// crossChr := world.crossover() // 交配
+		crossChannel := make(chan []Chromosome)
+		go world.crossoverChannel(crossChannel)
+		crossChr := <-crossChannel
+
+		// mutatedChr := world.mutate() // 突變
+		mutateChannel := make(chan []Chromosome)
+		go world.mutateChannel(mutateChannel)
+		mutatedChr := <-mutateChannel
 
 		world.chromosome = world.selection(crossChr, mutatedChr) // 選擇
 
@@ -104,6 +116,27 @@ func (world World) crossover() []Chromosome {
 }
 
 /**
+ * 產生交配後的下一代
+ * Concurrency Version
+ */
+func (world World) crossoverChannel(channel chan []Chromosome) {
+
+	crossChr := make([]Chromosome, world.generationNum)
+
+	for i := 0; i < world.generationNum; i++ {
+		firstIdx := rand.Int() % world.generationNum
+		secIdx := rand.Int() % world.generationNum
+		for secIdx == firstIdx {
+			secIdx = rand.Int() % world.generationNum
+		}
+		crossChr[i] = world.chromosome[firstIdx].crossover(world.chromosome[secIdx], rand.Float32()*0.5)
+		world.customMethod.Fitness(&crossChr[i])
+	}
+
+	channel <- crossChr
+}
+
+/**
  * 產生突變後的下一代
  */
 func (world World) mutate() []Chromosome {
@@ -116,6 +149,22 @@ func (world World) mutate() []Chromosome {
 	}
 
 	return mutatedChr
+}
+
+/**
+ * 產生突變後的下一代
+ * Concurrency Version
+ */
+func (world World) mutateChannel(channel chan []Chromosome) {
+
+	mutatedChr := make([]Chromosome, world.generationNum)
+
+	for i := 0; i < world.generationNum; i++ {
+		mutatedChr[i] = world.chromosome[i].mutate(rand.Float32() * 0.7)
+		world.customMethod.Fitness(&mutatedChr[i])
+	}
+
+	channel <- mutatedChr
 }
 
 /**
