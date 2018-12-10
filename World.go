@@ -8,6 +8,7 @@ import (
 
 //World 是染色體生存的環境
 type World struct {
+	cpuNums       int          //CPU使用數目
 	chromosome    []Chromosome //每個世代存活的染色體
 	randomNum     int          //每一世代中會隨機選擇及存活下來的染色體數量
 	generationNum int          //每個世代存活的染色體個數
@@ -33,6 +34,7 @@ func (world *World) Initial(generationNum int, randomNum int,
 	world.optimizeTimes = optimizeTimes
 	world.goodEnough = goodEnough
 	world.customMethod = customMethod
+	world.cpuNums = 1
 }
 
 //SetIsPrint 用來控制是否在GA過程中調用Custom介面中的Print
@@ -40,11 +42,16 @@ func (world *World) SetIsPrint(isPrint bool) {
 	world.isPrint = isPrint
 }
 
+//SetMAXCPUs sets the maximum number of CPUs that can be executing
+func (world *World) SetMAXCPUs(cpuNums int) {
+	world.cpuNums = cpuNums
+}
+
 //StartWorld 開始執行基因演算法
 func (world *World) StartWorld() {
 
 	//使用多核心
-	runtime.GOMAXPROCS(2)
+	runtime.GOMAXPROCS(world.cpuNums)
 
 	optTimes := 0
 	lastFitness := float64(0)
@@ -62,15 +69,20 @@ func (world *World) StartWorld() {
 			break
 		}
 
-		// crossChr := world.crossover() // 交配
-		crossChannel := make(chan []Chromosome)
-		go world.crossoverChannel(crossChannel)
-		crossChr := <-crossChannel
+		crossChannel := make(chan Chromosome, world.generationNum)  //交配
+		mutateChannel := make(chan Chromosome, world.generationNum) //突變
 
-		// mutatedChr := world.mutate() // 突變
-		mutateChannel := make(chan []Chromosome)
-		go world.mutateChannel(mutateChannel)
-		mutatedChr := <-mutateChannel
+		crossChr := make([]Chromosome, world.generationNum)
+		mutatedChr := make([]Chromosome, world.generationNum)
+
+		for i := 0; i < world.generationNum; i++ {
+			go world.crossoverChannel(crossChannel)
+			go world.mutateChannel(i, mutateChannel)
+		}
+		for i := 0; i < world.generationNum; i++ {
+			crossChr[i] = <-crossChannel
+			mutatedChr[i] = <-mutateChannel
+		}
 
 		world.chromosome = world.selection(crossChr, mutatedChr) // 選擇
 
@@ -119,19 +131,17 @@ func (world World) crossover() []Chromosome {
  * 產生交配後的下一代
  * Concurrency Version
  */
-func (world World) crossoverChannel(channel chan []Chromosome) {
+func (world World) crossoverChannel(channel chan Chromosome) {
 
-	crossChr := make([]Chromosome, world.generationNum)
+	var crossChr Chromosome
 
-	for i := 0; i < world.generationNum; i++ {
-		firstIdx := rand.Int() % world.generationNum
-		secIdx := rand.Int() % world.generationNum
-		for secIdx == firstIdx {
-			secIdx = rand.Int() % world.generationNum
-		}
-		crossChr[i] = world.chromosome[firstIdx].crossover(world.chromosome[secIdx], rand.Float32()*0.5)
-		world.customMethod.Fitness(&crossChr[i])
+	firstIdx := rand.Int() % world.generationNum
+	secIdx := rand.Int() % world.generationNum
+	for secIdx == firstIdx {
+		secIdx = rand.Int() % world.generationNum
 	}
+	crossChr = world.chromosome[firstIdx].crossover(world.chromosome[secIdx], rand.Float32()*0.5)
+	world.customMethod.Fitness(&crossChr)
 
 	channel <- crossChr
 }
@@ -155,14 +165,12 @@ func (world World) mutate() []Chromosome {
  * 產生突變後的下一代
  * Concurrency Version
  */
-func (world World) mutateChannel(channel chan []Chromosome) {
+func (world World) mutateChannel(index int, channel chan Chromosome) {
 
-	mutatedChr := make([]Chromosome, world.generationNum)
+	var mutatedChr Chromosome
 
-	for i := 0; i < world.generationNum; i++ {
-		mutatedChr[i] = world.chromosome[i].mutate(rand.Float32() * 0.7)
-		world.customMethod.Fitness(&mutatedChr[i])
-	}
+	mutatedChr = world.chromosome[index].mutate(rand.Float32() * 0.7)
+	world.customMethod.Fitness(&mutatedChr)
 
 	channel <- mutatedChr
 }

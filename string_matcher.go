@@ -43,7 +43,7 @@ func (matcher StringMatcher) Fitness(chromosome *Chromosome) {
 
 //Print is the method to implement Custom interface
 func (matcher StringMatcher) Print(iteration int, chromosome []Chromosome) {
-	if iteration%10000 != 0 {
+	if iteration%1000 != 0 {
 		return
 	}
 	targetLen := len(matcher.target)
