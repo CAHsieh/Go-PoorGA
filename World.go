@@ -8,7 +8,6 @@ import (
 
 //World 是染色體生存的環境
 type World struct {
-	cpuNums       int          //CPU使用數目
 	chromosome    []Chromosome //每個世代存活的染色體
 	randomNum     int          //每一世代中會隨機選擇及存活下來的染色體數量
 	generationNum int          //每個世代存活的染色體個數
@@ -17,6 +16,7 @@ type World struct {
 	goodEnough    float64      //停止條件3：足夠停止的準確度
 	customMethod  Custom       //需要客製化方法
 	isPrint       bool         //是否顯示當前狀態
+	cpuNums       int          //CPU使用數量上限
 }
 
 //Initial 用於設置相關參數

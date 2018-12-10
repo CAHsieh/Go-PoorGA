@@ -38,11 +38,13 @@
 >> | goodEnough    | 停止條件3：足夠停止的準確度 |
 >> | customMethod  | 客製化介面 |
 >> | isPrint       | 是否顯示當前狀態 |
+>> | cpuNums    | CPU使用數量上限 |
 >> ---
 >> |方法|說明|
 >> | :---: | :--- |
 >> |Initial|用於設置相關參數|
 >> |SetIsPrint|用來控制是否在GA過程中調用Custom介面中的Print|
+>> |SetMAXCPUs|用來設置使用CPU數量上限(預設為1)|
 >> |StartWorld|開始執行基因演算法|
 >> |crossover|產生交配後的下一世代|
 >> |mutate|產生突變後的下一世代|
@@ -66,6 +68,8 @@
 
 1. SetIsPrint自行選擇是否調用
 
+1. SetMAXCPUs可設置使用CPU數量上限值(預設為1)
+
 ## **Example**
 
 ```go
@@ -80,6 +84,7 @@ func main() {
 	var world poorga.World
 	world.Initial(50, 20, 300000, 300000, 1.0, stringMatcher)
 	world.SetIsPrint(true)
+	world.SetMAXCPUs(2)
 	world.StartWorld()
 
 }
